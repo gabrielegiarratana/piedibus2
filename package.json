@@ -1,0 +1,23 @@
+{
+  "name": "piedibus-shift-table",
+  "version": "1.0.0",
+  "description": "Tool per la gestione e generazione dei turni settimanali del Piedibus (Desktop & Mobile Android)",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/test-solver.js",
+    "serve": "npx serve .",
+    "open:android": "npx cap open android",
+    "build:apk": "npx cap sync android"
+  },
+  "keywords": [
+    "piedibus",
+    "turni",
+    "shift-scheduler",
+    "pwa",
+    "capacitor",
+    "responsive"
+  ],
+  "author": "Piedibus Team",
+  "license": "MIT"
+}

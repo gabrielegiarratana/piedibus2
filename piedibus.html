@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#059669">
+  <meta name="description" content="Gestione e generazione turni del Piedibus per Desktop e Android">
+  <title>Piedibus - Gestione Turni Settimanali</title>
+  <style>
+/* ==========================================================================
+   Piedibus Shift Table Tool - Responsive CSS (Desktop & Mobile Android)
+   ========================================================================== */
+
+:root {
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-light: #d1fae5;
+  --primary-dark: #064e3b;
+  
+  --secondary: #0284c7;
+  --secondary-light: #e0f2fe;
+
+  --accent: #d97706;
+  --accent-light: #fef3c7;
+
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-focus: #10b981;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --min-touch-target: 48px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+  padding-bottom: calc(var(--min-touch-target) + env(safe-area-inset-bottom, 24px) + 32px);
+}
+
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Header */
+.app-header {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand-icon {
+  font-size: 1.8rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Nav Tabs */
+.nav-tabs {
+  display: flex;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-tab {
+  flex: 1;
+  min-width: 130px;
+  min-height: var(--min-touch-target);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  padding: 10px 14px;
+  user-select: none;
+}
+
+.nav-tab.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-badge {
+  background: rgba(0, 0, 0, 0.15);
+  color: inherit;
+  font-size: 0.75rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+/* Card */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+  display: block;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--min-touch-target);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease-in-out;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: white;
+}
+.btn-accent:hover {
+  background: #b45309;
+}
+
+.btn-danger-outline {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+.btn-danger-outline:hover {
+  background: var(--danger-light);
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Add Member Form */
+.add-member-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.input-text {
+  flex: 1;
+  min-height: var(--min-touch-target);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 1rem;
+  outline: none;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.input-text:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+/* Week Days Selector */
+.week-days-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.day-chip {
+  flex: 1;
+  min-width: 95px;
+  min-height: 52px;
+  border: 2px solid var(--border);
+  background: white;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.day-chip.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.day-chip.excluded {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.day-chip-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.day-chip-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Desktop Matrix Table */
+.matrix-table-container {
+  display: block;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.matrix-table th,
+.matrix-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.matrix-table th {
+  background: #f8fafc;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.matrix-table tr:last-child td {
+  border-bottom: none;
+}
+
+.member-name-cell {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.member-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: #e2e8f0;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.day-toggle-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: white;
+  color: #94a3b8;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.day-toggle-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.day-toggle-btn:hover:not(.active) {
+  background: #f1f5f9;
+}
+
+/* Mobile Roster Cards */
+.mobile-roster-list {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-member-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.mobile-day-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.mobile-day-buttons .day-toggle-btn {
+  width: 100%;
+  min-height: var(--min-touch-target);
+  font-size: 0.85rem;
+}
+
+/* Proposal Layout */
+.proposal-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .proposal-layout {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.schedule-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shift-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.shift-card.pinned {
+  border-color: var(--secondary);
+  background: #f0f9ff;
+}
+
+.shift-card.missing {
+  border-color: var(--accent);
+  background: #fffbeb;
+}
+
+.shift-card.excluded {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  opacity: 0.6;
+}
+
+.shift-day-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+
+.shift-day-title {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.shift-day-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.shift-members-box {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.volunteer-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f1f5f9;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid var(--border);
+  min-height: 40px;
+}
+
+.volunteer-pill.missing {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-color: #fca5a5;
+}
+
+.pin-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.pin-btn.pinned {
+  background: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+.decision-gate {
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.decision-gate-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #14532d;
+  margin-bottom: 8px;
+}
+
+.decision-gate-desc {
+  font-size: 0.95rem;
+  color: #166534;
+  margin-bottom: 16px;
+}
+
+.decision-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.whatsapp-preview-box {
+  background: #075e54;
+  color: white;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.whatsapp-message-bubble {
+  background: #dcf8c6;
+  color: #111b21;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  word-break: break-word;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* Responsive Viewports */
+@media (min-width: 769px) {
+  .matrix-table-container {
+    display: block !important;
+  }
+  .mobile-roster-list {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .matrix-table-container {
+    display: none !important;
+  }
+  .mobile-roster-list {
+    display: flex !important;
+  }
+
+  .app-container {
+    padding: 10px;
+  }
+
+  .app-header {
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .decision-buttons .btn {
+    width: 100%;
+  }
+
+  .shift-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .shift-card .pin-btn {
+    align-self: flex-end;
+    margin-top: -36px;
+  }
+
+  .save-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #15803d;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+    padding: 5px 10px;
+    border-radius: 9999px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .save-badge.saving {
+    color: #b45309;
+    background: #fef3c7;
+    border-color: #fde68a;
+  }
+  .member-display-name {
+    cursor: pointer;
+    border-bottom: 1px dashed transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .member-display-name:hover {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+  .btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 4px;
+    opacity: 0.65;
+    font-size: 0.95rem;
+    transition: opacity 0.15s, transform 0.15s, background-color 0.15s;
+  }
+  .btn-icon:hover {
+    opacity: 1;
+    background: #e2e8f0;
+    transform: scale(1.1);
+  }
+  .inline-name-input {
+    padding: 5px 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header (No editable line name input, as requested) -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="brand-title">
+          <span class="brand-icon">🚶‍♂️</span>
+          <span>Piedibus - Turni Settimanali</span>
+        </div>
+        <div class="header-actions">
+          <span id="save-status-indicator" class="save-badge" title="Tutte le modifiche ai volontari e alle disponibilità sono salvate automaticamente">
+            ● Salvato
+          </span>
+          <button id="btn-save-drive" type="button" class="btn btn-primary btn-sm" title="Scarica il file HTML con la tua squadra aggiornata pronto per Google Drive">
+            💾 Salva per Drive
+          </button>
+          <button id="btn-reset-sample" type="button" class="btn btn-secondary btn-sm" title="Ripristina i 6 volontari di esempio">
+            🔄 Esempio
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stepper Navigation -->
+    <nav class="nav-tabs" aria-label="Passaggi dell'applicazione">
+      <button class="nav-tab active" data-tab="tab-team" type="button">
+        <span>👥 1. Squadra</span>
+        <span class="tab-badge" id="badge-members-count">6</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-week" type="button">
+        <span>📅 2. Settimana</span>
+        <span class="tab-badge" id="badge-active-days">5 gg</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-proposal" type="button">
+        <span>⚖️ 3. Turni</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-whatsapp" type="button">
+        <span>📲 4. WhatsApp</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: SQUADRA & DISPONIBILITÀ -->
+    <section id="tab-team" class="tab-content">
+      <div class="card">
+        <div class="card-title-row" style="flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 class="card-title">👥 Gestione Volontari e Disponibilità</h2>
+            <span class="card-subtitle">I volontari restano memorizzati sul dispositivo. Tocca ✏️ o il nome per modificarlo.</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btn-toggle-backup" type="button" class="btn btn-secondary btn-sm" title="Copia o incolla il codice della squadra per backup o trasferimento rapido">
+              📋 Backup Squadra
+            </button>
+            <button id="btn-clear-roster" type="button" class="btn btn-danger-outline btn-sm" title="Elimina tutti i volontari">
+              🗑️ Svuota Squadra
+            </button>
+          </div>
+        </div>
+
+        <!-- Squad Backup / Transfer Box (collapsible) -->
+        <div id="box-backup-team" style="display: none; margin-bottom: 20px; padding: 14px; background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm);">
+          <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 6px;">📋 Backup e Trasferimento Squadra</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+            Puoi copiare questo codice per conservarlo, oppure incollarne uno per caricare la squadra su un altro browser o telefono:
+          </p>
+          <textarea id="textarea-backup-code" rows="3" class="input-text" style="font-family: monospace; font-size: 0.8rem; margin-bottom: 10px; width: 100%;"></textarea>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="btn-copy-backup-code" type="button" class="btn btn-secondary btn-sm">📋 Copia Codice</button>
+            <button id="btn-apply-backup-code" type="button" class="btn btn-primary btn-sm">📥 Carica dal Codice Incollato</button>
+            <button id="btn-close-backup-box" type="button" class="btn btn-secondary btn-sm" style="margin-left: auto;">Chiudi</button>
+          </div>
+        </div>
+
+        <form id="form-add-member" class="add-member-form" onsubmit="return false;">
+          <input type="text" id="input-new-member" class="input-text" placeholder="Nome nuovo volontario (es. Laura)" autocomplete="off">
+          <button type="button" id="btn-add-member" class="btn btn-primary">➕ Aggiungi</button>
+        </form>
+
+        <!-- Desktop Matrix Table (>=769px) -->
+        <div class="matrix-table-container table-responsive">
+          <table class="matrix-table" aria-label="Tabella disponibilità volontari">
+            <thead>
+              <tr>
+                <th style="width: 250px;">Volontario</th>
+                <th style="text-align: center;">Lun</th>
+                <th style="text-align: center;">Mar</th>
+                <th style="text-align: center;">Mer</th>
+                <th style="text-align: center;">Gio</th>
+                <th style="text-align: center;">Ven</th>
+                <th style="text-align: center; width: 100px;">Azioni</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-tbody">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Member Cards (<=768px) -->
+        <div id="mobile-roster-list" class="mobile-roster-list" aria-label="Elenco tessere volontari mobile">
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: SETTIMANA & GENERAZIONE -->
+    <section id="tab-week" class="tab-content" style="display: none;">
+      <div class="card">
+        <div class="card-title-row">
+          <h2 class="card-title">📅 Configura la Settimana</h2>
+        </div>
+        <p class="card-subtitle">Imposta la data di inizio e tocca un giorno se la scuola è chiusa (festività, sciopero, gita).</p>
+
+        <div style="margin-bottom: 20px;">
+          <label for="input-week-date" style="font-weight: 700; display: block; margin-bottom: 6px;">Lunedì di inizio settimana:</label>
+          <input type="date" id="input-week-date" class="input-text" style="max-width: 240px;">
+        </div>
+
+        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 10px;">Giorni attivi per questa settimana:</h3>
+        <div id="week-days-chips" class="week-days-selector">
+        </div>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="btn-generate-proposal" type="button" class="btn btn-primary" style="flex: 2; min-width: 200px; font-size: 1.05rem; padding: 14px;">
+            ⚡ Calcola Proposta Turni (2 per giorno)
+          </button>
+          <button id="btn-reset-shifts" type="button" class="btn btn-secondary" style="flex: 1; min-width: 140px; font-size: 0.95rem; padding: 14px;" title="Azzera la proposta turni della settimana mantenendo intatti i volontari">
+            🧹 Azzera Solo Turni
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: PROPOSTA TURNI & APPROVAZIONE -->
+    <section id="tab-proposal" class="tab-content" style="display: none;">
+      <div class="card">
+        <div class="card-title-row">
+          <h2 class="card-title">⚖️ Proposta Assegnazione Turni</h2>
+          <span id="proposal-status-badge" class="volunteer-pill">In calcolo</span>
+        </div>
+        <p class="card-subtitle">Ogni giorno attivo ha esattamente 2 volontari assegnati, distribuiti in modo equo.</p>
+
+        <div class="proposal-layout">
+          <div>
+            <div id="schedule-cards" class="schedule-card-list">
+            </div>
+
+            <!-- Decision Gate -->
+            <div class="decision-gate">
+              <h3 class="decision-gate-title">Questa proposta va bene?</h3>
+              <p class="decision-gate-desc">Puoi bloccare (📌) i giorni che ti piacciono e rimescolare gli altri, oppure confermare.</p>
+              <div class="decision-buttons">
+                <button id="btn-reshuffle" type="button" class="btn btn-accent">
+                  🔄 Proponi un'altra combinazione
+                </button>
+                <button id="btn-confirm-proposal" type="button" class="btn btn-primary">
+                  ✅ Va bene! Prepara WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Workload Sidebar -->
+          <div>
+            <div class="card" style="margin-bottom: 0; background: #f8fafc;">
+              <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 12px;">📊 Riepilogo Carico Volontari</h3>
+              <div id="workload-summary-list" style="display: flex; flex-direction: column; gap: 8px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: WHATSAPP CONDIVISIONE -->
+    <section id="tab-whatsapp" class="tab-content" style="display: none;">
+      <div class="card">
+        <div class="card-title-row">
+          <h2 class="card-title">📲 Messaggio Pronto per WhatsApp</h2>
+        </div>
+        <p class="card-subtitle">Il messaggio è formattato e pronto da incollare nella chat WhatsApp dei genitori e volontari.</p>
+
+        <div class="whatsapp-preview-box">
+          <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; opacity: 0.9;">
+            Anteprima Messaggio WhatsApp:
+          </div>
+          <div id="whatsapp-preview-text" class="whatsapp-message-bubble">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label for="input-custom-note" style="font-weight: 700; font-size: 0.9rem; display: block; margin-bottom: 6px;">
+            Aggiungi una nota / avviso personalizzato (opzionale):
+          </label>
+          <input type="text" id="input-custom-note" class="input-text" placeholder="Es. Ricordiamo i gilet gialli martedì...">
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="btn-copy-whatsapp" type="button" class="btn btn-primary" style="flex: 1; min-width: 200px;">
+            📋 Copia Messaggio negli Appunti
+          </button>
+          <button id="btn-open-whatsapp" type="button" class="btn btn-secondary" style="flex: 1; min-width: 180px;">
+            🚀 Apri Direttamente WhatsApp
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="alert" aria-live="assertive">Messaggio copiato!</div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ==========================================
+    // 1. SOLVER ENGINE
+    // ==========================================
+    const WEEKDAYS = [
+      { key: 'monday', label: 'Lunedì', short: 'Lun' },
+      { key: 'tuesday', label: 'Martedì', short: 'Mar' },
+      { key: 'wednesday', label: 'Mercoledì', short: 'Mer' },
+      { key: 'thursday', label: 'Giovedì', short: 'Gio' },
+      { key: 'friday', label: 'Venerdì', short: 'Ven' }
+    ];
+
+    const PLACEHOLDER_MISSING = '[CERCA VOLONTARIO]';
+
+    function generateShiftProposal({
+      members = [],
+      availabilities = {},
+      activeDays = [],
+      pinnedDays = {},
+      attempt = 0
+    }) {
+      const activeMembers = members.filter(m => m.active !== false);
+      const resultShifts = {};
+      const workload = {};
+      for (const m of activeMembers) {
+        workload[m.id] = 0;
+      }
+
+      const targetDays = activeDays.filter(d => WEEKDAYS.some(w => w.key === d));
+
+      for (const day of WEEKDAYS) {
+        const isExcluded = !targetDays.includes(day.key);
+        resultShifts[day.key] = {
+          day: day.key,
+          label: day.label,
+          isExcluded,
+          isPinned: Boolean(pinnedDays[day.key]),
+          slots: [null, null],
+          hasMissingVolunteer: false
+        };
+      }
+
+      // 1. Apply pinned days
+      for (const dayKey of targetDays) {
+        if (pinnedDays[dayKey] && Array.isArray(pinnedDays[dayKey])) {
+          const [m1, m2] = pinnedDays[dayKey];
+          resultShifts[dayKey].slots = [m1 || null, m2 || null];
+          resultShifts[dayKey].isPinned = true;
+          if (m1 && workload[m1] !== undefined) workload[m1]++;
+          if (m2 && workload[m2] !== undefined) workload[m2]++;
+        }
+      }
+
+      const daysToAssign = targetDays.filter(dayKey => {
+        const slots = resultShifts[dayKey].slots;
+        return slots[0] === null || slots[1] === null;
+      });
+
+      const memberAvailabilityCount = {};
+      for (const m of activeMembers) {
+        const daysAvail = (availabilities[m.id] || []).filter(d => targetDays.includes(d));
+        memberAvailabilityCount[m.id] = daysAvail.length;
+      }
+
+      const dailyCandidates = {};
+      for (const dayKey of daysToAssign) {
+        const available = activeMembers.filter(m => {
+          const isAvail = (availabilities[m.id] || []).includes(dayKey);
+          const alreadyInDay = resultShifts[dayKey].slots.includes(m.id);
+          return isAvail && !alreadyInDay;
+        });
+        dailyCandidates[dayKey] = available;
+      }
+
+      const sortedDays = [...daysToAssign].sort((a, b) => {
+        const diff = dailyCandidates[a].length - dailyCandidates[b].length;
+        if (diff !== 0) return diff;
+        return ((a.charCodeAt(0) + attempt * 7) % 5) - ((b.charCodeAt(0) + attempt * 7) % 5);
+      });
+
+      for (const dayKey of sortedDays) {
+        const shift = resultShifts[dayKey];
+
+        for (let slotIndex = 0; slotIndex < 2; slotIndex++) {
+          if (shift.slots[slotIndex] !== null) continue;
+
+          const eligible = activeMembers.filter(m => {
+            const isAvail = (availabilities[m.id] || []).includes(dayKey);
+            const alreadyInDay = shift.slots.includes(m.id);
+            return isAvail && !alreadyInDay;
+          });
+
+          if (eligible.length === 0) {
+            shift.slots[slotIndex] = null;
+            shift.hasMissingVolunteer = true;
+            continue;
+          }
+
+          eligible.sort((a, b) => {
+            const loadA = workload[a.id];
+            const loadB = workload[b.id];
+            if (loadA !== loadB) return loadA - loadB;
+
+            const constrA = memberAvailabilityCount[a.id] || 0;
+            const constrB = memberAvailabilityCount[b.id] || 0;
+            if (constrA !== constrB) return constrA - constrB;
+
+            const hashA = (a.id.charCodeAt(0) + attempt * 13) % 17;
+            const hashB = (b.id.charCodeAt(0) + attempt * 13) % 17;
+            return hashA - hashB;
+          });
+
+          const selected = eligible[0];
+          shift.slots[slotIndex] = selected.id;
+          workload[selected.id]++;
+        }
+
+        if (shift.slots.includes(null)) {
+          shift.hasMissingVolunteer = true;
+        }
+      }
+
+      const totalSlotsNeeded = targetDays.length * 2;
+      const assignedSlots = Object.values(resultShifts)
+        .filter(s => !s.isExcluded)
+        .flatMap(s => s.slots)
+        .filter(Boolean).length;
+      const missingSlotsCount = totalSlotsNeeded - assignedSlots;
+
+      return {
+        shifts: resultShifts,
+        workload,
+        targetDays,
+        totalSlotsNeeded,
+        assignedSlots,
+        missingSlotsCount,
+        isFullyCovered: missingSlotsCount === 0,
+        attempt
+      };
+    }
+
+    // ==========================================
+    // 2. STORE ENGINE
+    // ==========================================
+    const STORAGE_KEY = 'piedibus_data_v2';
+    const DEFAULT_MEMBERS = [
+      { id: 'm1', name: 'Marco Rossi', active: true },
+      { id: 'm2', name: 'Anna Bianchi', active: true },
+      { id: 'm3', name: 'Luca Verdi', active: true },
+      { id: 'm4', name: 'Sofia Neri', active: true },
+      { id: 'm5', name: 'Elena Fontana', active: true },
+      { id: 'm6', name: 'Matteo Ferrari', active: true }
+    ];
+    const DEFAULT_AVAILABILITIES = {
+      m1: ['monday', 'tuesday', 'thursday'],
+      m2: ['monday', 'wednesday', 'friday'],
+      m3: ['tuesday', 'wednesday', 'friday'],
+      m4: ['monday', 'wednesday', 'thursday', 'friday'],
+      m5: ['tuesday', 'thursday', 'friday'],
+      m6: ['monday', 'tuesday', 'wednesday', 'thursday']
+    };
+    const DEFAULT_WEEK_DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+    function getUpcomingMonday() {
+      const d = new Date();
+      const day = d.getDay();
+      const diff = (day === 0 ? 1 : (8 - day) % 7);
+      d.setDate(d.getDate() + (day === 1 ? 0 : diff));
+      return d.toISOString().split('T')[0];
+    }
+
+    class LocalStore {
+      constructor() {
+        this.state = this.loadState();
+      }
+
+      loadState() {
+        try {
+          const serialized = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('piedibus_data_v1');
+          if (serialized) {
+            const parsed = JSON.parse(serialized);
+            if (parsed && typeof parsed === 'object') {
+              const defaults = this.getDefaults();
+              return {
+                ...defaults,
+                ...parsed,
+                members: Array.isArray(parsed.members) ? parsed.members : defaults.members,
+                availabilities: (parsed.availabilities && typeof parsed.availabilities === 'object')
+                  ? parsed.availabilities
+                  : defaults.availabilities
+              };
+            }
+          }
+        } catch (e) {
+          console.warn('LocalStorage error:', e);
+        }
+        return this.getDefaults();
+      }
+
+      getDefaults() {
+        return {
+          weekStartDate: getUpcomingMonday(),
+          members: JSON.parse(JSON.stringify(DEFAULT_MEMBERS)),
+          availabilities: JSON.parse(JSON.stringify(DEFAULT_AVAILABILITIES)),
+          activeDays: [...DEFAULT_WEEK_DAYS],
+          pinnedDays: {},
+          currentProposal: null,
+          customNote: '',
+          attemptCount: 0
+        };
+      }
+
+      save() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+          if (typeof updateSaveIndicator === 'function') {
+            updateSaveIndicator(true);
+          }
+        } catch (e) {
+          console.error('LocalStorage save error:', e);
+          if (typeof updateSaveIndicator === 'function') {
+            updateSaveIndicator(false);
+          }
+        }
+      }
+
+      resetToDefaults() {
+        this.state = this.getDefaults();
+        this.save();
+        return this.state;
+      }
+
+      clearRoster() {
+        this.state.members = [];
+        this.state.availabilities = {};
+        this.state.pinnedDays = {};
+        this.state.currentProposal = null;
+        this.save();
+        return this.state;
+      }
+
+      addMember(name) {
+        if (!name || !name.trim()) return null;
+        const id = 'm_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
+        const newMember = { id, name: name.trim(), active: true };
+        this.state.members.push(newMember);
+        // Default: available all 5 days so they can be scheduled immediately
+        this.state.availabilities[id] = [...DEFAULT_WEEK_DAYS];
+        this.save();
+        return newMember;
+      }
+
+      editMember(id, newName) {
+        if (!newName || !newName.trim()) return false;
+        const m = this.state.members.find(x => x.id === id);
+        if (m) {
+          m.name = newName.trim();
+          this.save();
+          return true;
+        }
+        return false;
+      }
+
+      resetProposal() {
+        this.state.pinnedDays = {};
+        this.state.currentProposal = null;
+        this.state.attemptCount = 0;
+        this.save();
+        return this.state;
+      }
+
+      removeMember(id) {
+        this.state.members = this.state.members.filter(m => m.id !== id);
+        delete this.state.availabilities[id];
+        for (const [day, slots] of Object.entries(this.state.pinnedDays)) {
+          this.state.pinnedDays[day] = slots.map(s => (s === id ? null : s));
+        }
+        this.save();
+      }
+
+      toggleMemberActive(id) {
+        const m = this.state.members.find(x => x.id === id);
+        if (m) {
+          m.active = !m.active;
+          this.save();
+        }
+      }
+
+      toggleAvailability(memberId, dayKey) {
+        const cur = this.state.availabilities[memberId] || [];
+        if (cur.includes(dayKey)) {
+          this.state.availabilities[memberId] = cur.filter(d => d !== dayKey);
+        } else {
+          this.state.availabilities[memberId] = [...cur, dayKey];
+        }
+        this.save();
+      }
+
+      toggleActiveDay(dayKey) {
+        if (this.state.activeDays.includes(dayKey)) {
+          this.state.activeDays = this.state.activeDays.filter(d => d !== dayKey);
+        } else {
+          this.state.activeDays = [...this.state.activeDays, dayKey];
+        }
+        this.save();
+      }
+
+      setWeekStartDate(dateStr) {
+        this.state.weekStartDate = dateStr;
+        this.save();
+      }
+
+      setCustomNote(note) {
+        this.state.customNote = note;
+        this.save();
+      }
+
+      togglePinDay(dayKey, slots) {
+        if (this.state.pinnedDays[dayKey]) {
+          delete this.state.pinnedDays[dayKey];
+        } else {
+          this.state.pinnedDays[dayKey] = [...slots];
+        }
+        this.save();
+      }
+
+      setProposal(proposal) {
+        this.state.currentProposal = proposal;
+        this.save();
+      }
+    }
+
+    // ==========================================
+    // 3. WHATSAPP BUILDER
+    // ==========================================
+    function getWeekDateRange(startDateStr) {
+      if (!startDateStr) return { startFormatted: '', endFormatted: '' };
+      try {
+        const start = new Date(startDateStr);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 4);
+        const formatOptions = { day: '2-digit', month: '2-digit' };
+        return {
+          startFormatted: start.toLocaleDateString('it-IT', formatOptions),
+          endFormatted: end.toLocaleDateString('it-IT', formatOptions)
+        };
+      } catch (e) {
+        return { startFormatted: startDateStr, endFormatted: '' };
+      }
+    }
+
+    function buildWhatsAppMessage({
+      weekStartDate = '',
+      proposal = null,
+      members = [],
+      customNote = ''
+    }) {
+      if (!proposal || !proposal.shifts) {
+        return 'Nessun turno programmato. Vai alla scheda "Settimana" e premi "Calcola Proposta Turni".';
+      }
+
+      const { startFormatted, endFormatted } = getWeekDateRange(weekStartDate);
+      const memberMap = new Map(members.map(m => [m.id, m.name]));
+
+      const lines = [];
+      lines.push('🚶‍♂️ *PIEDIBUS - TURNI DELLA SETTIMANA* 🚶‍♀️');
+      if (startFormatted && endFormatted) {
+        lines.push(`📅 *Settimana dal ${startFormatted} al ${endFormatted}*`);
+      }
+      lines.push('');
+
+      let hasMissing = false;
+
+      for (const day of WEEKDAYS) {
+        const shift = proposal.shifts[day.key];
+        if (!shift) continue;
+
+        if (shift.isExcluded) {
+          lines.push(`• *${day.label}*: ⛔ *CHIUSURA (Nessun Piedibus)*`);
+        } else {
+          const vol1Name = shift.slots[0] ? memberMap.get(shift.slots[0]) || 'Volontario' : null;
+          const vol2Name = shift.slots[1] ? memberMap.get(shift.slots[1]) || 'Volontario' : null;
+
+          let pairText = '';
+          if (vol1Name && vol2Name) {
+            pairText = `${vol1Name} e ${vol2Name}`;
+          } else if (vol1Name && !vol2Name) {
+            pairText = `${vol1Name} e ⚠️ *${PLACEHOLDER_MISSING}*`;
+            hasMissing = true;
+          } else if (!vol1Name && vol2Name) {
+            pairText = `⚠️ *${PLACEHOLDER_MISSING}* e ${vol2Name}`;
+            hasMissing = true;
+          } else {
+            pairText = `⚠️ *2 VOLONTARI MANCANTI*`;
+            hasMissing = true;
+          }
+
+          lines.push(`• *${day.label}*: ${pairText}`);
+        }
+      }
+
+      lines.push('');
+      if (hasMissing) {
+        lines.push('🚨 *ATTENZIONE: Abbiamo ancora posti scoperti per alcuni turni! Chi fosse disponibile ad aggiungersi scriva qui nel gruppo. Grazie!* 🙏');
+        lines.push('');
+      }
+
+      if (customNote && customNote.trim()) {
+        lines.push(`📝 *Note*: ${customNote.trim()}`);
+        lines.push('');
+      }
+
+      lines.push('⚠️ *In caso di imprevisti o impossibilità a coprire il turno, vi preghiamo di avvisare con anticipo o trovare un sostituto.*');
+      lines.push('🌟 *Grazie mille di cuore a tutti i volontari!*');
+
+      return lines.join('\n');
+    }
+
+    async function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch (err) {}
+      }
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return success;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function openWhatsAppDirect(text) {
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
+    // ==========================================
+    // 4. UI CONTROLLER & EVENT BINDINGS
+    // ==========================================
+    const store = new LocalStore();
+
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const badgeMembersCount = document.getElementById('badge-members-count');
+    const badgeActiveDays = document.getElementById('badge-active-days');
+    const saveStatusIndicator = document.getElementById('save-status-indicator');
+    const btnSaveDrive = document.getElementById('btn-save-drive');
+    const btnResetSample = document.getElementById('btn-reset-sample');
+
+    const btnToggleBackup = document.getElementById('btn-toggle-backup');
+    const btnClearRoster = document.getElementById('btn-clear-roster');
+    const boxBackupTeam = document.getElementById('box-backup-team');
+    const textareaBackupCode = document.getElementById('textarea-backup-code');
+    const btnCopyBackupCode = document.getElementById('btn-copy-backup-code');
+    const btnApplyBackupCode = document.getElementById('btn-apply-backup-code');
+    const btnCloseBackupBox = document.getElementById('btn-close-backup-box');
+
+    const formAddMember = document.getElementById('form-add-member');
+    const inputNewMember = document.getElementById('input-new-member');
+    const btnAddMember = document.getElementById('btn-add-member');
+    const matrixTbody = document.getElementById('matrix-tbody');
+    const mobileRosterList = document.getElementById('mobile-roster-list');
+
+    const inputWeekDate = document.getElementById('input-week-date');
+    const weekDaysChips = document.getElementById('week-days-chips');
+    const btnGenerateProposal = document.getElementById('btn-generate-proposal');
+    const btnResetShifts = document.getElementById('btn-reset-shifts');
+
+    const proposalStatusBadge = document.getElementById('proposal-status-badge');
+    const scheduleCards = document.getElementById('schedule-cards');
+    const workloadSummaryList = document.getElementById('workload-summary-list');
+    const btnReshuffle = document.getElementById('btn-reshuffle');
+    const btnConfirmProposal = document.getElementById('btn-confirm-proposal');
+
+    const whatsappPreviewText = document.getElementById('whatsapp-preview-text');
+    const inputCustomNote = document.getElementById('input-custom-note');
+    const btnCopyWhatsapp = document.getElementById('btn-copy-whatsapp');
+    const btnOpenWhatsapp = document.getElementById('btn-open-whatsapp');
+    const toast = document.getElementById('toast');
+
+    let editingMemberId = null;
+
+    function updateSaveIndicator(isSaved) {
+      if (!saveStatusIndicator) return;
+      if (isSaved) {
+        saveStatusIndicator.textContent = '● Salvato';
+        saveStatusIndicator.className = 'save-badge';
+      } else {
+        saveStatusIndicator.textContent = '⚠️ Non salvato';
+        saveStatusIndicator.className = 'save-badge saving';
+      }
+    }
+
+    function switchTab(tabId) {
+      navTabs.forEach(t => {
+        if (t.getAttribute('data-tab') === tabId) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+      tabContents.forEach(c => {
+        if (c.id === tabId) c.style.display = 'block';
+        else c.style.display = 'none';
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    function handleAddMember() {
+      const name = inputNewMember.value.trim();
+      if (!name) {
+        inputNewMember.focus();
+        return;
+      }
+      store.addMember(name);
+      inputNewMember.value = '';
+      renderTeamSection();
+      showToast(`✅ ${name} aggiunto alla squadra!`);
+    }
+
+    function renderTeamSection() {
+      const members = store.state.members || [];
+      const availabilities = store.state.availabilities || {};
+      badgeMembersCount.textContent = members.length;
+
+      // Render Desktop Matrix Table
+      matrixTbody.innerHTML = '';
+      if (members.length === 0) {
+        matrixTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 28px; font-weight: 600;">Nessun volontario presente. Aggiungi il primo volontario con il modulo sopra oppure clicca "🔄 Esempio"!</td></tr>`;
+      }
+
+      members.forEach(member => {
+        const memberAvails = availabilities[member.id] || [];
+        const tr = document.createElement('tr');
+        if (!member.active) tr.style.opacity = '0.4';
+
+        const avatarInitial = (member.name && member.name.charAt(0).toUpperCase()) || '?';
+        const isEditing = editingMemberId === member.id;
+
+        const nameDisplayHtml = isEditing ? `
+          <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+            <input type="text" class="inline-name-input" value="${escapeHtml(member.name)}" data-id="${member.id}" style="max-width: 150px;">
+            <button type="button" class="btn btn-primary btn-sm btn-save-name" data-id="${member.id}" title="Salva modifiche">✓</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-cancel-name" data-id="${member.id}" title="Annulla">✕</button>
+          </div>
+        ` : `
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span class="member-display-name" data-id="${member.id}" title="Clicca per modificare il nome" style="font-weight: 800; font-size: 1.05rem;">
+              ${escapeHtml(member.name)}
+            </span>
+            <button type="button" class="btn-icon btn-edit-name" data-id="${member.id}" title="Modifica nome">✏️</button>
+          </div>
+        `;
+
+        tr.innerHTML = `
+          <td>
+            <div class="member-name-cell">
+              <span class="member-avatar">${avatarInitial}</span>
+              <div>
+                ${nameDisplayHtml}
+                <small style="color: var(--text-muted); cursor: pointer;" class="btn-toggle-active" data-id="${member.id}">
+                  ${member.active ? '● Attivo' : '○ Inattivo'}
+                </small>
+              </div>
+            </div>
+          </td>
+          ${WEEKDAYS.map(day => {
+            const isSelected = memberAvails.includes(day.key);
+            return `
+              <td style="text-align: center;">
+                <button type="button" class="day-toggle-btn ${isSelected ? 'active' : ''}" data-member="${member.id}" data-day="${day.key}">
+                  ${isSelected ? '✓' : '-'}
+                </button>
+              </td>
+            `;
+          }).join('')}
+          <td style="text-align: center;">
+            <button type="button" class="btn btn-danger-outline btn-sm btn-delete-member" data-id="${member.id}" title="Elimina volontario">
+              🗑️
+            </button>
+          </td>
+        `;
+        matrixTbody.appendChild(tr);
+      });
+
+      // Render Mobile Roster Cards
+      mobileRosterList.innerHTML = '';
+      if (members.length === 0) {
+        mobileRosterList.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 24px; font-weight: 600;">Nessun volontario presente. Aggiungine uno sopra oppure clicca "🔄 Esempio"!</div>`;
+      }
+
+      members.forEach(member => {
+        const memberAvails = availabilities[member.id] || [];
+        const card = document.createElement('div');
+        card.className = 'mobile-member-card';
+        const isEditing = editingMemberId === member.id;
+
+        const mobileNameHtml = isEditing ? `
+          <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+            <input type="text" class="inline-name-input" value="${escapeHtml(member.name)}" data-id="${member.id}" style="flex: 1;">
+            <button type="button" class="btn btn-primary btn-sm btn-save-name" data-id="${member.id}">✓</button>
+            <button type="button" class="btn btn-secondary btn-sm btn-cancel-name" data-id="${member.id}">✕</button>
+          </div>
+        ` : `
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <strong class="member-display-name" data-id="${member.id}" title="Clicca per modificare il nome" style="font-size: 1.1rem;">
+              ${escapeHtml(member.name)}
+            </strong>
+            <button type="button" class="btn-icon btn-edit-name" data-id="${member.id}" title="Modifica nome">✏️</button>
+            <span class="btn-toggle-active" data-id="${member.id}" style="font-size: 0.8rem; margin-left: 6px; font-weight: 700; cursor: pointer; color: ${member.active ? 'var(--primary)' : 'var(--text-muted)'};">
+              ${member.active ? '● Attivo' : '○ Inattivo'}
+            </span>
+          </div>
+        `;
+
+        card.innerHTML = `
+          <div class="mobile-card-header">
+            <div style="flex: 1;">
+              ${mobileNameHtml}
+            </div>
+            <button type="button" class="btn btn-danger-outline btn-sm btn-delete-member" data-id="${member.id}" title="Elimina volontario">
+              🗑️
+            </button>
+          </div>
+          <div class="mobile-day-buttons">
+            ${WEEKDAYS.map(day => {
+              const isSelected = memberAvails.includes(day.key);
+              return `
+                <button type="button" class="day-toggle-btn ${isSelected ? 'active' : ''}" data-member="${member.id}" data-day="${day.key}">
+                  ${day.short} ${isSelected ? '✓' : ''}
+                </button>
+              `;
+            }).join('')}
+          </div>
+        `;
+        mobileRosterList.appendChild(card);
+      });
+
+      // Bind button events for both Desktop table and Mobile cards
+      document.querySelectorAll('.day-toggle-btn').forEach(btn => {
+        btn.onclick = () => {
+          store.toggleAvailability(btn.getAttribute('data-member'), btn.getAttribute('data-day'));
+          renderTeamSection();
+        };
+      });
+
+      document.querySelectorAll('.btn-delete-member').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-id');
+          const m = store.state.members.find(x => x.id === id);
+          const name = m ? m.name : 'Volontario';
+          store.removeMember(id);
+          renderTeamSection();
+          if (store.state.currentProposal) renderProposalSection();
+          updateWhatsAppPreview();
+          showToast(`🗑️ ${name} rimosso dalla squadra`);
+        };
+      });
+
+      document.querySelectorAll('.btn-toggle-active').forEach(span => {
+        span.onclick = () => {
+          const id = span.getAttribute('data-id');
+          if (id) {
+            store.toggleMemberActive(id);
+            renderTeamSection();
+          }
+        };
+      });
+
+      // Inline editing event bindings
+      document.querySelectorAll('.btn-edit-name, .member-display-name').forEach(el => {
+        el.onclick = (e) => {
+          e.stopPropagation();
+          const id = el.getAttribute('data-id');
+          editingMemberId = id;
+          renderTeamSection();
+          const inputEl = document.querySelector(`.inline-name-input[data-id="${id}"]`);
+          if (inputEl) {
+            inputEl.focus();
+            inputEl.select();
+          }
+        };
+      });
+
+      document.querySelectorAll('.btn-save-name').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-id');
+          const inputEl = document.querySelector(`.inline-name-input[data-id="${id}"]`);
+          if (inputEl) {
+            const newName = inputEl.value.trim();
+            if (newName) {
+              store.editMember(id, newName);
+              editingMemberId = null;
+              renderTeamSection();
+              if (store.state.currentProposal) renderProposalSection();
+              updateWhatsAppPreview();
+              showToast(`✏️ Nome salvato: "${newName}"`);
+            } else {
+              showToast('⚠️ Il nome non può essere vuoto');
+            }
+          }
+        };
+      });
+
+      document.querySelectorAll('.btn-cancel-name').forEach(btn => {
+        btn.onclick = () => {
+          editingMemberId = null;
+          renderTeamSection();
+        };
+      });
+
+      document.querySelectorAll('.inline-name-input').forEach(inp => {
+        inp.onkeydown = (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const id = inp.getAttribute('data-id');
+            const newName = inp.value.trim();
+            if (newName) {
+              store.editMember(id, newName);
+              editingMemberId = null;
+              renderTeamSection();
+              if (store.state.currentProposal) renderProposalSection();
+              updateWhatsAppPreview();
+              showToast(`✏️ Nome salvato: "${newName}"`);
+            }
+          } else if (e.key === 'Escape') {
+            editingMemberId = null;
+            renderTeamSection();
+          }
+        };
+      });
+    }
+
+    function renderWeekSection() {
+      const activeDays = store.state.activeDays || [];
+      badgeActiveDays.textContent = `${activeDays.length} gg`;
+      weekDaysChips.innerHTML = '';
+
+      WEEKDAYS.forEach(day => {
+        const isActive = activeDays.includes(day.key);
+        const chip = document.createElement('div');
+        chip.className = `day-chip ${isActive ? 'active' : 'excluded'}`;
+        chip.innerHTML = `
+          <span class="day-chip-name">${day.label}</span>
+          <span class="day-chip-status">${isActive ? '✅ Piedibus Attivo' : '⛔ Chiuso / Festivo'}</span>
+        `;
+        chip.onclick = () => {
+          store.toggleActiveDay(day.key);
+          renderWeekSection();
+        };
+        weekDaysChips.appendChild(chip);
+      });
+    }
+
+    function runGeneration(attempt = 0) {
+      const proposal = generateShiftProposal({
+        members: store.state.members,
+        availabilities: store.state.availabilities,
+        activeDays: store.state.activeDays,
+        pinnedDays: store.state.pinnedDays,
+        attempt
+      });
+
+      store.setProposal(proposal);
+      renderProposalSection();
+      updateWhatsAppPreview();
+    }
+
+    function renderProposalSection() {
+      const proposal = store.state.currentProposal;
+      if (!proposal) return;
+
+      const memberMap = new Map(store.state.members.map(m => [m.id, m]));
+
+      if (proposal.isFullyCovered) {
+        proposalStatusBadge.className = 'volunteer-pill';
+        proposalStatusBadge.style.background = 'var(--primary-light)';
+        proposalStatusBadge.style.color = 'var(--primary-dark)';
+        proposalStatusBadge.textContent = '✅ Copertura Completa (2/2)';
+      } else {
+        proposalStatusBadge.className = 'volunteer-pill missing';
+        proposalStatusBadge.textContent = `⚠️ Posti mancanti: ${proposal.missingSlotsCount}`;
+      }
+
+      scheduleCards.innerHTML = '';
+      WEEKDAYS.forEach(day => {
+        const shift = proposal.shifts[day.key];
+        if (!shift) return;
+
+        const card = document.createElement('div');
+        let cardClass = 'shift-card';
+        if (shift.isExcluded) cardClass += ' excluded';
+        else if (shift.isPinned) cardClass += ' pinned';
+        else if (shift.hasMissingVolunteer) cardClass += ' missing';
+        card.className = cardClass;
+
+        const vol1Name = shift.slots[0] ? memberMap.get(shift.slots[0])?.name || 'Volontario' : null;
+        const vol2Name = shift.slots[1] ? memberMap.get(shift.slots[1])?.name || 'Volontario' : null;
+
+        let membersContent = '';
+        if (shift.isExcluded) {
+          membersContent = `<span style="color: var(--text-muted); font-style: italic;">⛔ Nessun turno previsto (Scuola Chiusa)</span>`;
+        } else {
+          membersContent = `
+            <div class="volunteer-pill ${!vol1Name ? 'missing' : ''}">
+              👤 ${vol1Name ? escapeHtml(vol1Name) : PLACEHOLDER_MISSING}
+            </div>
+            <div class="volunteer-pill ${!vol2Name ? 'missing' : ''}">
+              👤 ${vol2Name ? escapeHtml(vol2Name) : PLACEHOLDER_MISSING}
+            </div>
+          `;
+        }
+
+        const pinButtonHtml = shift.isExcluded ? '' : `
+          <button type="button" class="pin-btn ${shift.isPinned ? 'pinned' : ''}" data-day="${day.key}" title="${shift.isPinned ? 'Sblocca giorno' : 'Blocca questo giorno'}">
+            ${shift.isPinned ? '📌' : '📍'}
+          </button>
+        `;
+
+        card.innerHTML = `
+          <div class="shift-day-info">
+            <span class="shift-day-title">${day.label}</span>
+            <span class="shift-day-badge">${shift.isExcluded ? 'Escluso' : '2 Volontari'}</span>
+          </div>
+          <div class="shift-members-box">
+            ${membersContent}
+          </div>
+          ${pinButtonHtml}
+        `;
+
+        scheduleCards.appendChild(card);
+      });
+
+      document.querySelectorAll('.pin-btn').forEach(btn => {
+        btn.onclick = () => {
+          const dayKey = btn.getAttribute('data-day');
+          const shift = proposal.shifts[dayKey];
+          if (shift && !shift.isExcluded) {
+            store.togglePinDay(dayKey, shift.slots);
+            runGeneration(store.state.attemptCount || 0);
+          }
+        };
+      });
+
+      workloadSummaryList.innerHTML = '';
+      store.state.members.filter(m => m.active !== false).forEach(m => {
+        const count = proposal.workload[m.id] || 0;
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        item.style.padding = '8px 12px';
+        item.style.background = 'white';
+        item.style.border = '1px solid var(--border)';
+        item.style.borderRadius = 'var(--radius-sm)';
+
+        item.innerHTML = `
+          <span style="font-weight: 700;">${escapeHtml(m.name)}</span>
+          <span class="tab-badge" style="background: var(--primary-light); color: var(--primary-dark); font-weight: 800; font-size: 0.85rem;">
+            ${count} ${count === 1 ? 'turno' : 'turni'}
+          </span>
+        `;
+        workloadSummaryList.appendChild(item);
+      });
+    }
+
+    function getGeneratedWhatsAppText() {
+      return buildWhatsAppMessage({
+        weekStartDate: store.state.weekStartDate,
+        proposal: store.state.currentProposal,
+        members: store.state.members,
+        customNote: store.state.customNote
+      });
+    }
+
+    function updateWhatsAppPreview() {
+      whatsappPreviewText.textContent = getGeneratedWhatsAppText();
+    }
+
+    function renderAll() {
+      inputWeekDate.value = store.state.weekStartDate || getUpcomingMonday();
+      inputCustomNote.value = store.state.customNote || '';
+      renderTeamSection();
+      renderWeekSection();
+      if (store.state.currentProposal) {
+        renderProposalSection();
+      }
+      updateWhatsAppPreview();
+    }
+
+    // --- EVENT BINDINGS ---
+    navTabs.forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+    });
+
+    inputWeekDate.addEventListener('change', e => {
+      store.setWeekStartDate(e.target.value);
+      updateWhatsAppPreview();
+    });
+
+    inputCustomNote.addEventListener('input', e => {
+      store.setCustomNote(e.target.value);
+      updateWhatsAppPreview();
+    });
+
+    // Save for Google Drive / Standalone Download
+    function downloadHtmlWithCurrentTeam() {
+      try {
+        let fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+        // Clean serialized versions of current state
+        const membersJson = JSON.stringify(store.state.members, null, 2);
+        const availJson = JSON.stringify(store.state.availabilities, null, 2);
+
+        // Bake current squad into DEFAULT_MEMBERS and DEFAULT_AVAILABILITIES
+        fullHtml = fullHtml.replace(/const DEFAULT_MEMBERS = \[[\s\S]*?\];/, 'const DEFAULT_MEMBERS = ' + membersJson + ';');
+        fullHtml = fullHtml.replace(/const DEFAULT_AVAILABILITIES = \{[\s\S]*?\};/, 'const DEFAULT_AVAILABILITIES = ' + availJson + ';');
+
+        const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+        const blobUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = blobUrl;
+        downloadLink.download = 'piedibus.html';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(blobUrl);
+
+        showToast('💾 File piedibus.html scaricato con la tua squadra aggiornata!');
+      } catch (err) {
+        console.error('Download error:', err);
+        showToast('⚠️ Errore durante il salvataggio per Drive');
+      }
+    }
+
+    if (btnSaveDrive) {
+      btnSaveDrive.addEventListener('click', () => {
+        downloadHtmlWithCurrentTeam();
+      });
+    }
+
+    // Backup & Transfer Team Box
+    if (btnToggleBackup && boxBackupTeam) {
+      btnToggleBackup.addEventListener('click', () => {
+        const isHidden = boxBackupTeam.style.display === 'none' || !boxBackupTeam.style.display;
+        boxBackupTeam.style.display = isHidden ? 'block' : 'none';
+        if (isHidden && textareaBackupCode) {
+          textareaBackupCode.value = JSON.stringify({
+            members: store.state.members,
+            availabilities: store.state.availabilities
+          }, null, 2);
+        }
+      });
+    }
+
+    if (btnCloseBackupBox && boxBackupTeam) {
+      btnCloseBackupBox.addEventListener('click', () => {
+        boxBackupTeam.style.display = 'none';
+      });
+    }
+
+    if (btnCopyBackupCode && textareaBackupCode) {
+      btnCopyBackupCode.addEventListener('click', async () => {
+        const ok = await copyToClipboard(textareaBackupCode.value);
+        if (ok) {
+          showToast('📋 Codice squadra copiato negli appunti!');
+        } else {
+          showToast('⚠️ Impossibile copiare il codice');
+        }
+      });
+    }
+
+    if (btnApplyBackupCode && textareaBackupCode) {
+      btnApplyBackupCode.addEventListener('click', () => {
+        try {
+          const raw = textareaBackupCode.value.trim();
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.members)) {
+            store.state.members = parsed.members;
+            if (parsed.availabilities && typeof parsed.availabilities === 'object') {
+              store.state.availabilities = parsed.availabilities;
+            }
+            store.save();
+            renderAll();
+            showToast('✅ Squadra caricata con successo!');
+            if (boxBackupTeam) boxBackupTeam.style.display = 'none';
+          } else {
+            alert('Formato codice non valido: deve contenere un elenco "members".');
+          }
+        } catch (err) {
+          alert('Errore nella lettura del codice: ' + err.message);
+        }
+      });
+    }
+
+    // Reset Shifts Only (for starting a new week without touching members)
+    if (btnResetShifts) {
+      btnResetShifts.addEventListener('click', () => {
+        if (confirm('Vuoi azzerare i turni calcolati per iniziare una nuova settimana?\n\nI nomi dei volontari e le loro disponibilità rimarranno salvati.')) {
+          store.resetProposal();
+          renderAll();
+          showToast('🧹 Turni della settimana azzerati!');
+        }
+      });
+    }
+
+    // Reset to Sample Volunteers (with confirmation)
+    btnResetSample.addEventListener('click', () => {
+      if (confirm('Vuoi davvero ripristinare i volontari di esempio?\n\nTutti i volontari inseriti verranno sostituiti dai dati di prova.')) {
+        store.resetToDefaults();
+        renderAll();
+        showToast('🔄 Dati di esempio ripristinati!');
+      }
+    });
+
+    // Clear Roster (with confirmation)
+    btnClearRoster.addEventListener('click', () => {
+      if (confirm('Vuoi davvero cancellare TUTTI i volontari della squadra?\n\nQuesta operazione non è reversibile.')) {
+        store.clearRoster();
+        renderAll();
+        showToast('🗑️ Elenco volontari azzerato!');
+      }
+    });
+
+    // Add Member via Form submission or Enter key
+    formAddMember.addEventListener('submit', e => {
+      e.preventDefault();
+      handleAddMember();
+    });
+
+    // Add Member via Button click
+    btnAddMember.addEventListener('click', () => {
+      handleAddMember();
+    });
+
+    // Enter key inside input
+    inputNewMember.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleAddMember();
+      }
+    });
+
+    // Generate Proposal
+    btnGenerateProposal.addEventListener('click', () => {
+      runGeneration(0);
+      switchTab('tab-proposal');
+    });
+
+    // Reshuffle Proposal
+    btnReshuffle.addEventListener('click', () => {
+      store.state.attemptCount = (store.state.attemptCount || 0) + 1;
+      runGeneration(store.state.attemptCount);
+      showToast('🔄 Nuova combinazione generata');
+    });
+
+    // Confirm Proposal
+    btnConfirmProposal.addEventListener('click', () => {
+      updateWhatsAppPreview();
+      switchTab('tab-whatsapp');
+    });
+
+    // Copy to Clipboard
+    btnCopyWhatsapp.addEventListener('click', async () => {
+      const text = getGeneratedWhatsAppText();
+      const success = await copyToClipboard(text);
+      if (success) {
+        showToast('✅ Messaggio copiato negli appunti!');
+      } else {
+        showToast('⚠️ Impossibile copiare automaticamente');
+      }
+    });
+
+    // Open in WhatsApp
+    btnOpenWhatsapp.addEventListener('click', () => {
+      openWhatsAppDirect(getGeneratedWhatsAppText());
+    });
+
+    // Initial boot
+    renderAll();
+  })();
+  </script>
+</body>
+</html>
